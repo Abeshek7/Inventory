@@ -78,3 +78,30 @@ input:focus {
 a:link { 
   text-decoration: none; 
 }
+.skandh {
+    max-height: 50px;
+    /* width: auto;
+    padding: 0; */
+}
+
+.top-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+.top-left{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+}
+.s3logo {
+    margin-top: 5px;
+    max-height: 50px;
+    margin-bottom: 5px;
+}

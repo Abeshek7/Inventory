@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="{{url_for('static',filename='css/inventory.css')}}">
 </head>
 <body>
+    <header class="login-header">
+        <div class="top-left">
+        <img class="skandh" src="{{ url_for('static', filename='images/skandh.png') }}" alt="Skandh Logo">
+        </div> 
+        <div class="top-right">
+            <img class="s3logo" src="{{ url_for('static', filename='images/s3logo_new.png') }}" alt="S3 Logo">
+        </div>
+    </header>
     <div class="form-container">
     <form id="inventory_capture_2">
         <h1>Inventory  capture</h1>
@@ -23,8 +31,8 @@
             </div>
 
             <div class="form-row">
-            <label for="case">CASE :</label>
-                <input id="case" type="text" name="case" >
+            <label for="case">LPN :</label>
+                <input id="case" type="text" name="LPN" >
             </div>
 
          
