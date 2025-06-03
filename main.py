@@ -118,6 +118,7 @@ def capture_owner():
     return jsonify({'redirect': url_for('second_html')})
 
 @app.route('/inventory')
+@login_required
 def second_html():
     return render_template('inventory.html')
 
@@ -149,7 +150,7 @@ def capture_inventory():
         conn.commit()
 
         # Call stored procedure to update ASN numbers
-        cursor.callproc('process_download_dummy', [username])
+        cursor.callproc('process_download_final', [username])
         conn.commit()
         
         return jsonify({"message": "Inventory data saved successfully!"}), 200
@@ -165,6 +166,7 @@ def capture_inventory():
             conn.close()
 
 @app.route('/download_excel')
+@login_required
 def download_excel():
     conn = get_db_connection()
  
@@ -240,6 +242,7 @@ def download_excel():
         download_name='inventory_export.xlsx',
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
+
 
 
 

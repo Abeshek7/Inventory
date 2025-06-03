@@ -55,17 +55,19 @@ body {
 } */
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     display: flex;
     align-items: center; /* Align vertically centered */
+    font-weight: 400;
 }
 
 .input-group label {
-    color: #666;
-    font-size: 14px;
-    margin-right: 10px; /* Space between label and input */
+    /* color: #666; */
+    color:#333;
+    font-size: 16px;
+    /* Space between label and input */
     width: 100px; /* Fixed width for alignment */
-    text-align: right;
+    /* text-align: right; */
 }
 
 .input-group input {
@@ -100,6 +102,7 @@ body {
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .login-btn input[type="submit"]:hover {
@@ -154,3 +157,4 @@ body {
     top: 10px;
     left: 20px;
 }
+

@@ -38,7 +38,8 @@ h1 {
        text-align: center;
        font-size: 32px;
        margin-bottom: 30px;
-       color:rgb(10, 102, 194);
+       /* color:rgb(10, 102, 194); */
+       color: rgb(8, 102, 255);
        }
 
 input:focus {
@@ -119,7 +120,8 @@ header img {
     border-radius: 5px;
 } */
  .logout-btn {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
+    background-color: #e74c3c;
     border: 1px solid #ccc;
     border-radius: 6px;
     padding: 6px 10px;
@@ -127,8 +129,10 @@ header img {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    margin-top: 10px;
     margin-bottom: 20px;
-     color: #222;
+     /* color: #222; */
+    color: #ffffff;
     transition: background-color 0.2s, box-shadow 0.2s;
 } 
 

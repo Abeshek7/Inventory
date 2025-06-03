@@ -13,6 +13,8 @@
             <img class="s3logo" src="{{ url_for('static', filename='images/s3logo_new.png') }}" alt="S3 Logo">
         </div>
     </header>
+
+    
     <div class="login-container">
         <div class="login-form">
             <h2>Login</h2>
@@ -28,14 +30,15 @@
                 </div>
 
                 <div class="login-btn">
-                    <input type="submit" value="Sign in">
+                    <input type="submit" value="Log in">
                 </div>
             </form>
             {% if error %}
             <p class="error-message">{{ error }}</p>
             {% endif %}
-            <p class="register-link">Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+          <!--<p class="register-link">Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>--> 
         </div>
     </div>
+
 </body>
 </html>
