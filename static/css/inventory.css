@@ -110,3 +110,62 @@ a:link {
     max-height: 50px;
     margin-bottom: 5px;
 }
+#download-message {
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 15px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    display: none; 
+}
+
+#download-message.error {
+    background-color: #ffe0e0;
+    color: #a94442;
+    border: 1px solid #f5c2c2;
+}
+
+#download-message.success {
+    background-color: #e0f7e9;
+    color: #2e7d32;
+    border: 1px solid #b2dfdb;
+}
+#form-message {
+ padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  display: none;
+  text-align: center;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  width: fit-content;
+  max-width: 90%;
+  box-sizing: border-box;
+}
+
+#form-message.success {
+  background-color: #e0f7e9;
+  color: #2e7d32;
+  border: 1px solid #b2dfdb;
+}
+
+#form-message.error {
+  background-color: #ffe0e0;
+  color: #a94442;
+  border: 1px solid #f5c2c2;
+}
+.form-actions {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-top: 20px;
+}
+
+.left-actions,
+.right-actions {
+  display: flex;
+}

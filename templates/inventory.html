@@ -47,18 +47,21 @@
                 <input id="qty" type="text" name="qty" >
             </div>
 
-    </form>
+            <div id="form-message" class="message-area"></div>
+            <div class="form-actions">
+              <div class="left-actions">
+                 <button type="button" class="back-button" onclick="window.location.href='/' ">ESC</button>
+              </div>
+            <div class="right-actions">
+                 <button type="button" id="download_excel_btn" class="btn-primary">Download</button>
+            </div>
+            </div>
 
-     <button type="button" class="back-button" onclick="window.location.href='/' ">ESC</button>
-
-     <!-- for downloading excel 20/5/25 -->
-    
-        <!-- <button href="{{ url_for('download_excel') }}" class=" btn-primary">Download</button> -->
-
-        <a href="{{ url_for('download_excel') }}" class="btn-primary">Download</a>
-     
+             <div id="download-message"></div>
      
     </div>
+
+    </form>
 
     <script src="{{url_for('static',filename='js/inventory.js')}}"></script>
 </body>

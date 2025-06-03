@@ -185,6 +185,9 @@ def download_excel():
                FROM download_table WHERE download_status = 'NO' ''',
             conn
         )
+        
+        if df1.empty or df2.empty:
+            return jsonify({"error": "No data available to export"}), 404
 
         cursor = conn.cursor()
         cursor.execute("UPDATE download_table SET download_status = 'YES' WHERE download_status = 'NO'")
