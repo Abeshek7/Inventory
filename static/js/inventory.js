@@ -61,6 +61,9 @@ inputs.forEach((input, index) => {
                             formMessageDiv.classList.add('success');
                             formMessageDiv.style.display = 'block';
 
+                             // Set formsubmitted to true to enable ESC key
+                            formsubmitted = 1;
+
                             // Clear after 5 seconds
                             setTimeout(() => {
                                 formMessageDiv.textContent = '';
@@ -84,7 +87,7 @@ inputs.forEach((input, index) => {
                                 formMessageDiv.textContent = '';
                                 formMessageDiv.style.display = 'none';
                                 formMessageDiv.classList.remove('error');
-                            }, 5000);
+                            }, 3000);
                         });
                 } else {
                     inputs[index + 1].focus();
@@ -106,48 +109,7 @@ inputs.forEach((input, index) => {
 
 // When I press esc key it will go back to the main page.
 document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && formsubmitted) {
-        window.location.href = '/';
+    if (event.key === 'Escape') {
+        window.location.href = '/firstpage';
     }
-});
-
-// --- Excel Download with UI Message ---
-document.getElementById('download_excel_btn').addEventListener('click', function () {
-    const messageDiv = document.getElementById('download-message');
-    messageDiv.textContent = ''; // Clear any previous message
-    messageDiv.style.display = 'none';
-    messageDiv.classList.remove('error', 'success');
-
-    fetch('/download_excel')
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.error || "Unexpected error");
-                });
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'inventory_export.xlsx';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-            
-        })
-        .catch(error => {
-            messageDiv.textContent = error.message;
-            messageDiv.style.display = 'block';
-            messageDiv.classList.remove('success');
-            messageDiv.classList.add('error');
-
-            setTimeout(() => {
-                messageDiv.textContent = '';
-                messageDiv.style.display = 'none';
-                messageDiv.classList.remove('error');
-            }, 5000);
-        });
 });

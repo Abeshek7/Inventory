@@ -39,3 +39,10 @@ input.addEventListener('input', function() {
          Star.classList.remove('visible'); // Hide the star when the user starts typing
     }
 });
+
+// When I press esc key it will go back to the main page.
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        window.location.href = '/';
+    }
+});

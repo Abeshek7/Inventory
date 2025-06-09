@@ -4,10 +4,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 95vh;
+    height: 80vh;
     }
-
-    .form-container {
+.login-container {
       background: white;
       padding: 30px 40px;
       margin: 100px auto;
@@ -15,25 +14,20 @@
       border-radius: 20px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
-    
-
-    h1 {
+ h1 {
       text-align: center;
       font-size: 32px;
       margin-bottom: 30px;
-      /* color: rgb(10, 102, 194); */
       color: rgb(8, 102, 255);
     }
-
-    .form-row {
+     .form-row {
       display: flex;
       align-items: center;
       margin-bottom: 35px;
       font-size: 24px;
       font-weight: 700;
     }
-
-    .form-row label {
+        .form-row label {
       width: 80px;            
       font-weight: lighter;
       text-align: right;
@@ -41,36 +35,29 @@
       font-size: 16px;
       font-weight: 500;
     }
-
-    .form-row input {
+        .form-row input {
       flex: 1;                
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
-    .required {
+      .required {
         color: red;
         font-weight: bold;
         margin-left: 5px;
         visibility: hidden;
        }
-       .not-required{
-        margin-left: 12px;
-      
-       }
-
-.required.visible {
+       .required.visible {
     visibility: visible;
        }
-input:focus {
+       input:focus {
         border: 1px solid rgb(19,163,247);
         outline: 1px solid lightblue;
         background-color: #f0f8ff ;
         transition: background-color 0.3s;
        }
-
- .back-button,.btn-primary {
+        .back-button {
     background-color: #ffffff;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -79,22 +66,24 @@ input:focus {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
      color: #222;
     transition: background-color 0.2s, box-shadow 0.2s;
 } 
 
- .back-button:hover,.btn-primary:hover {
+ .back-button:hover {
     background-color: #f0f0f0;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 } 
-a:link { 
-  text-decoration: none; 
-}
+
 .skandh {
     max-height: 50px;
 }
-
+.s3logo {
+    margin-top: 10px;
+    max-height: 50px;
+    margin-bottom: 5px;
+}
 .top-right {
     display: flex;
     flex-direction: column;
@@ -110,68 +99,4 @@ a:link {
     position: absolute;
     top: 10px;
     left: 20px;
-}
-.s3logo {
-    margin-top: 5px;
-    max-height: 50px;
-    margin-bottom: 5px;
-}
-#download-message {
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 15px;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    display: none; 
-}
-
-#download-message.error {
-    background-color: #ffe0e0;
-    color: #a94442;
-    border: 1px solid #f5c2c2;
-}
-
-#download-message.success {
-    background-color: #e0f7e9;
-    color: #2e7d32;
-    border: 1px solid #b2dfdb;
-}
-#form-message {
- padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 15px;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  display: none;
-  text-align: center;
-
-  margin-left: auto;
-  margin-right: auto;
-
-  width: fit-content;
-  max-width: 90%;
-  box-sizing: border-box;
-}
-
-#form-message.success {
-  background-color: #e0f7e9;
-  color: #2e7d32;
-  border: 1px solid #b2dfdb;
-}
-
-#form-message.error {
-  background-color: #ffe0e0;
-  color: #a94442;
-  border: 1px solid #f5c2c2;
-}
-.form-actions {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  margin-top: 20px;
-}
-
-.left-actions,
-.right-actions {
-  display: flex;
 }

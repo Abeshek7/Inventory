@@ -31,34 +31,11 @@ body {
     text-align: center;
 }
 
-/* .input-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.input-group label {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
-    height: 36px;
-} */
-
 .input-group {
     margin-bottom: 30px;
     display: flex;
     align-items: center; /* Align vertically centered */
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .input-group label {

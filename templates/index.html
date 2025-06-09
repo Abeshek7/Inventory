@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page</title>
-    <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+    <title>Capture Owner</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}">
 </head>
 <body>
     <header class="main-header">
@@ -13,17 +13,20 @@
     </div>
      <div class="top-right">
     <img class="s3logo" src="{{url_for('static',filename='images/s3logo_new.png')}}" alt="S3 Logo">
-    <a href="{{ url_for('logout') }}">
-    <button class="logout-btn"  type="button">Logout</button>
     </div>
 </a>
 </header>
-    <div>
-    <form id =inventory_capture>
+    <div class="login-container">
+    <form id ="inventory_capture">
         <h1>Inventory Upload</h1>
-    <label class="owner" for="owner">OWNER:<span class="required">*</span></label>
+        <div class="form-row">
+        <label class="owner" for="owner">OWNER :<span class="required">*</span></label>
         <input id="owner" type="text" name="owner" >
+        </div>
+        <div class="left-actions">
+        <button type="button" class="back-button" onclick="window.location.href='/' ">ESC</button>
     </form>
+   </div>
     </div>
     <script src="{{url_for('static',filename='js/script.js')}}"></script>
 </body>

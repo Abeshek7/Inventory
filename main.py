@@ -79,7 +79,7 @@ def login():
                 session['user_id'] = user['id']
                 session['username'] = user['username']
 
-                return redirect(url_for('firstpage'))
+                return redirect(url_for('mainpage'))
             else:
                 return render_template('login.html', error="Invalid credentials.")
         
@@ -100,8 +100,13 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-
 @app.route('/')
+@login_required
+def mainpage():
+    return render_template('main.html')
+
+
+@app.route('/firstpage')
 @login_required
 def firstpage():
     return render_template('index.html')
@@ -122,55 +127,113 @@ def capture_owner():
 def second_html():
     return render_template('inventory.html')
 
-@app.route('/second_form',methods=['POST'])
+@app.route('/second_form', methods=['POST'])
+@login_required
 def capture_inventory():
-    data=request.get_json()
-    locn=data.get('locn')
-    sku=data.get('sku')
-    LPN=data.get('LPN')
-    uom=data.get('uom')
-    qty=data.get('qty')
+    data = request.get_json()
+    locn = data.get('locn')
+    sku = data.get('sku')
+    LPN = data.get('LPN')
+    uom = data.get('uom')
+    qty = data.get('qty')
     owner = session.get('owner')
     username = session.get('username')
     created_at = datetime.now()
-    
-    conn=None
-    cursor=None
-    
+
+    conn = None
+    cursor = None
+
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
-        # Insert into inv_capture table
+        # Insert into inv_capture table first
         sql = """INSERT INTO inv_capture1 
                 (owner, location, sku, lpn, uom, qty, username, created_at) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         val = (owner, locn, sku, LPN, uom, qty, username, created_at)
         cursor.execute(sql, val)
         conn.commit()
-
-        # Call stored procedure to update ASN numbers
-        cursor.callproc('process_download_final', [username])
-        conn.commit()
         
         return jsonify({"message": "Inventory data saved successfully!"}), 200
 
     except mysql.connector.Error as err:
-        print("MySQL Error: ", err)
-        return jsonify({"error": "Database error"}), 500
+        print("MySQL Error:", err)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": f"Database error: {str(err)}"}), 500
+    except Exception as e:
+        print("General Error:", e)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
     finally:
         if cursor:
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
-
+            
 @app.route('/download_excel')
 @login_required
 def download_excel():
     conn = get_db_connection()
- 
+    cursor = conn.cursor(dictionary=True)
     try:
+        username = session.get('username')
+
+        #  Fetch all unprocessed inventory records
+        cursor.execute("""
+            SELECT * FROM inv_capture1 
+            WHERE status IS NULL OR status = ''
+            ORDER BY created_at
+        """)
+        pending_inventory = cursor.fetchall()
+
+        if not pending_inventory:
+            return jsonify({"error": "No new inventory data to assign ASN/line."}), 404
+
+        # Loop and assign ASN/Line, insert into download_table
+        for record in pending_inventory:
+            owner = record['owner']
+            locn = record['location']
+            sku = record['sku']
+            lpn = record['lpn']
+            uom = record['uom']
+            qty = record['qty']
+            created_at = record['created_at']
+
+            # Call the stored procedure
+            cursor.execute("""
+                CALL GenerateASNAndLine(%s, %s, @asn_out, @line_out, @status_out, @msg_out)
+            """, (owner, username))
+            cursor.execute("""
+                SELECT @asn_out AS asn_number, @line_out AS line_number, 
+                       @status_out AS status, @msg_out AS message
+            """)
+            proc_result = cursor.fetchone()
+
+            if proc_result['status'] != 'SUCCESS':
+                print(f"[ERROR] ASN generation failed for SKU: {sku}, Reason: {proc_result['message']}")
+                continue  # Skip this record and move to next
+
+            asn_number = proc_result['asn_number']
+            line_number = proc_result['line_number']
+
+            # Insert into download_table
+            cursor.execute("""
+                INSERT INTO download_table 
+                (asn_number, owner, sku, line_number, location, lpn, uom, qty, username, created_at, download_status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'NO')
+            """, (asn_number, owner, sku, line_number, locn, lpn, uom, qty, username, created_at))
+
+            # Mark inv_capture1 record as processed
+            cursor.execute("""
+                UPDATE inv_capture1 SET status = 'Y' WHERE id = %s
+            """, (record['id'],))
+
+        conn.commit()
+
         df1 = pd.read_sql(
             '''SELECT DISTINCT "" as `Column Name`, "" as `GenericKey`, 
                       asn_number as `ASN/Receipt`, owner as `Owner`, status as `Receipt Status` 

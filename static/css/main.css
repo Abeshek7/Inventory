@@ -1,0 +1,202 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+}
+.main-container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+.main-form {
+    width: 100%;
+    background: white;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+.form-header {
+    background-color: #f8f9fa;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-header h2 {
+    font-size: 18px;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 10px;
+}
+.options-list {
+    padding: 0;
+    margin: 0;
+}
+
+.option-item {
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.option-item:last-child {
+    border-bottom: none;
+}
+
+.option-button {
+    width: 100%;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 20px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    font-family: inherit;
+}
+
+.option-button:hover {
+    background-color: #f8f9fa;
+}
+
+.option-button:active {
+    background-color: #e9ecef;
+}
+
+.option-number {
+    color: #666;
+    margin-right: 8px;
+    font-weight: 500;
+}
+
+.option-text {
+    color: #333;
+}
+
+/* Header Styles */
+.login-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: white;
+    height: 80px;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.skandh {
+    max-height: 50px;
+}
+.s3logo {
+    margin-top: 10px;
+    max-height: 50px;
+    margin-bottom: 5px;
+}
+.top-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+.top-left{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+}
+#download-message {
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 15px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    display: none; 
+}
+
+#download-message.error {
+    background-color: #ffe0e0;
+    color: #a94442;
+    border: 1px solid #f5c2c2;
+    text-align: center;
+}
+
+#download-message.success {
+    background-color: #e0f7e9;
+    color: #2e7d32;
+    border: 1px solid #b2dfdb;
+}
+.asn-btn button, .Inventory-btn button {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: rgb(8, 102, 255);
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+ .logout-btn {
+    background-color: #e74c3c;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    margin-right: 5px;
+    color: #ffffff;
+    transition: background-color 0.2s, box-shadow 0.2s;
+} 
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+a {
+    text-decoration: none;
+}
+.section-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #000;
+    border-bottom: 0.5px solid #666;
+    padding-bottom: 8px;
+    margin: 20px 20px 10px 20px;
+}
