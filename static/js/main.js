@@ -1,14 +1,11 @@
 document.getElementById('download_excel_btn').addEventListener('click', function () {
     const messageDiv = document.getElementById('download-message');
-    messageDiv.textContent = ''; // Clear any previous message
+    messageDiv.textContent = '';
     messageDiv.style.display = 'none';
     messageDiv.classList.remove('error', 'success');
 
     fetch('/download_excel', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json', // specify content type
-        }
+        method: 'GET'
     })
     .then(response => {
         if (!response.ok) {
@@ -16,13 +13,24 @@ document.getElementById('download_excel_btn').addEventListener('click', function
                 throw new Error(data.error || "Unexpected error");
             });
         }
-        return response.blob();
+
+        const disposition = response.headers.get('Content-Disposition');
+        let filename = 'inventory_export.xlsx';  // fallback filename
+
+        if (disposition && disposition.includes('filename=')) {
+            const match = disposition.match(/filename="?([^"]+)"?/);
+            if (match && match[1]) {
+                filename = match[1];
+            }
+        }
+
+        return response.blob().then(blob => ({ blob, filename }));
     })
-    .then(blob => {
+    .then(({ blob, filename }) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'inventory_export.xlsx';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -41,6 +49,7 @@ document.getElementById('download_excel_btn').addEventListener('click', function
         }, 3000);
     });
 });
-document.getElementById('Inventory-btn').addEventListener('click', function() {
+
+document.getElementById('Inventory-btn').addEventListener('click', function () {
     window.location.href = '{{ url_for("firstpage") }}';
 });

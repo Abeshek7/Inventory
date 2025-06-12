@@ -2,6 +2,7 @@
 const form = document.getElementById('inventory_capture');
 const input = document.getElementById('owner');
 const Star = document.querySelector('.required')
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 form.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
@@ -20,7 +21,8 @@ form.addEventListener('keydown', function(event) {
         fetch('/capture_owner', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({ owner: ownerinput })
         })

@@ -23,9 +23,10 @@
                     <form id="main-page" action="{{ url_for('firstpage') }}" method="GET">
                 <div class="options-list">
                     <div class="option-item">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="button" id="download_excel_btn" class="option-button">
                             <span class="option-number">1 -</span>
-                            <span class="option-text">Generate ASN and Download Excel</span>
+                            <span class="option-text">Generate ASN and Download </span>
                         </button>
                     </div>
                     <div class="option-item">

@@ -1,24 +1,79 @@
-from flask import Flask,render_template,request,jsonify,session,url_for,send_file,redirect
+from flask import Flask,render_template,request,jsonify,session,url_for,send_file,redirect,make_response
 import pandas as pd
-import os,mysql.connector,io
-from werkzeug.security import generate_password_hash, check_password_hash #created wed 28/05/25
-from functools import wraps #created wed 28/05/25
-from datetime import date, datetime #created wed 28/05/25
+import os,mysql.connector,io,urllib.parse
+from werkzeug.security import generate_password_hash, check_password_hash 
+from functools import wraps
+from datetime import datetime 
+from dotenv import load_dotenv
+from flask_wtf import CSRFProtect
 
 
 app=Flask(__name__)
 
-#returns 24 bytes not character
-app.secret_key = os.urandom(24)
+load_dotenv()
+
+app.secret_key = os.getenv("SECRET_KEY")
+
+# CSRF Protection
+csrf = CSRFProtect(app)
+
+app.config.update(
+    SESSION_COOKIE_SECURE=True, # Prevents client-side JavaScript from accessing session cookies.
+    SESSION_COOKIE_HTTPONLY=True, #Only sends cookies over HTTPS
+    SESSION_COOKIE_SAMESITE='Lax' #Prevents CSRF in most cases by disallowing cookies in cross-site POST requests.
+)
+
 
 def get_db_connection():
     connection = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='admin123',
-        database='inventory'
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        database=os.getenv('DB_NAME')
     )
     return connection
+
+#One-time Initialization for NEXTUP table 
+def insert_nextup():
+    app_username = 'admin'  # system user
+    try:
+        conn = mysql.connector.connect(
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        database=os.getenv('DB_NAME')
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM NEXTUP WHERE TYPE = %s", ('ASN',))
+        count = cursor.fetchone()[0]
+        if count > 0:
+            print(" 'ASN' record already exists in NEXTUP. Skipping insert.")
+            return
+        sql = """
+            INSERT INTO NEXTUP (
+                TYPE, STARTINGNUMBER, ENDINGNUMBER, CURRENTNUMBER,
+                NEXTNUMBER, ADDDATE, USERCREATED, DATEUPDATED, USERUPDATED,PREFIX
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            )
+        """
+        now = datetime.now()
+        values = (
+            'ASN', 'ASN10000001', 'ASN99999999', 'ASN10000001',
+            'ASN10000002', now, app_username, now, app_username,'ASN'
+        )
+        cursor.execute(sql, values)
+        print("About to commit...")
+        conn.commit()
+        print(" NEXTUP table initialized with ASN sequence.")
+    except mysql.connector.Error as err:
+        print(" MySQL Error during NEXTUP insert:", err)
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
 
 # --- Auth helpers ---
 def login_required(f):
@@ -36,13 +91,13 @@ def register():
         username = request.form['username']
         password = request.form['password']
         hashed_pw = generate_password_hash(password)
-        created_date = date.today()
+        ADDDATE = datetime.now()
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO user_master (username, password, created_date) VALUES (%s, %s, %s)",
-                (username, hashed_pw, created_date)
+                "INSERT INTO USERMASTER (USERNAME, PASSWORD, ADDDATE) VALUES (%s, %s, %s)",
+                (username, hashed_pw, ADDDATE)
             )
             conn.commit()
             return redirect(url_for('login'))
@@ -64,20 +119,20 @@ def login():
         cursor = conn.cursor(dictionary=True)
         
         try:
-            cursor.execute("SELECT * FROM user_master WHERE username=%s", (username,))
+            cursor.execute("SELECT * FROM USERMASTER WHERE USERNAME=%s", (username,))
             user = cursor.fetchone()
 
-            if user and check_password_hash(user['password'], password):
+            if user and check_password_hash(user['PASSWORD'], password):
                 last_login_time = datetime.now()
                 cursor.execute("""
-                    UPDATE user_master 
-                    SET last_login = %s 
-                    WHERE id = %s
-                """, (last_login_time, user['id']))
+                    UPDATE USERMASTER 
+                    SET LASTLOGIN = %s 
+                    WHERE ID = %s
+                """, (last_login_time, user['ID']))
                 conn.commit()
 
-                session['user_id'] = user['id']
-                session['username'] = user['username']
+                session['user_id'] = user['ID']
+                session['username'] = user['USERNAME']
 
                 return redirect(url_for('mainpage'))
             else:
@@ -138,7 +193,7 @@ def capture_inventory():
     qty = data.get('qty')
     owner = session.get('owner')
     username = session.get('username')
-    created_at = datetime.now()
+    ADDDATE = datetime.now()
 
     conn = None
     cursor = None
@@ -147,11 +202,11 @@ def capture_inventory():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Insert into inv_capture table first
-        sql = """INSERT INTO inv_capture1 
-                (owner, location, sku, lpn, uom, qty, username, created_at) 
+        # Insert into INVENTORYCAPTURE table first
+        sql = """INSERT INTO INVENTORYCAPTURE 
+                (OWNER, LOCATION, SKU, LPN, UOM, QTY, USERNAME, ADDDATE) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-        val = (owner, locn, sku, LPN, uom, qty, username, created_at)
+        val = (owner, locn, sku, LPN, uom, qty, username, ADDDATE)
         cursor.execute(sql, val)
         conn.commit()
         
@@ -184,9 +239,9 @@ def download_excel():
 
         #  Fetch all unprocessed inventory records
         cursor.execute("""
-            SELECT * FROM inv_capture1 
-            WHERE status IS NULL OR status = ''
-            ORDER BY created_at
+            SELECT * FROM INVENTORYCAPTURE 
+            WHERE STATUS IS NULL OR STATUS = ''
+            ORDER BY ADDDATE 
         """)
         pending_inventory = cursor.fetchall()
 
@@ -195,20 +250,22 @@ def download_excel():
 
         # Loop and assign ASN/Line, insert into download_table
         for record in pending_inventory:
-            owner = record['owner']
-            locn = record['location']
-            sku = record['sku']
-            lpn = record['lpn']
-            uom = record['uom']
-            qty = record['qty']
-            created_at = record['created_at']
+            owner = record['OWNER']
+            locn = record['LOCATION']
+            sku = record['SKU']
+            lpn = record['LPN']
+            uom = record['UOM']
+            qty = record['QTY']
+            
+            
+            ADDDATE = datetime.now()
 
             # Call the stored procedure
             cursor.execute("""
-                CALL GenerateASNAndLine(%s, %s, @asn_out, @line_out, @status_out, @msg_out)
+                CALL GenerateASNLineNumber(%s, %s, @asn_out, @line_out, @status_out, @msg_out)
             """, (owner, username))
             cursor.execute("""
-                SELECT @asn_out AS asn_number, @line_out AS line_number, 
+                SELECT @asn_out AS ASNNUMBER, @line_out AS LINENUMBER, 
                        @status_out AS status, @msg_out AS message
             """)
             proc_result = cursor.fetchone()
@@ -217,35 +274,35 @@ def download_excel():
                 print(f"[ERROR] ASN generation failed for SKU: {sku}, Reason: {proc_result['message']}")
                 continue  # Skip this record and move to next
 
-            asn_number = proc_result['asn_number']
-            line_number = proc_result['line_number']
+            ASNNUMBER = proc_result['ASNNUMBER']
+            LINENUMBER = proc_result['LINENUMBER']
 
             # Insert into download_table
             cursor.execute("""
-                INSERT INTO download_table 
-                (asn_number, owner, sku, line_number, location, lpn, uom, qty, username, created_at, download_status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'NO')
-            """, (asn_number, owner, sku, line_number, locn, lpn, uom, qty, username, created_at))
+                INSERT INTO DOWNLOADTABLE 
+                (OWNER,ASNNUMBER,LINENUMBER,LOCATION,SKU,LPN,UOM, QTY, USERNAME,ADDDATE)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (owner,ASNNUMBER,LINENUMBER,locn, sku,lpn, uom, qty, username, ADDDATE))
 
-            # Mark inv_capture1 record as processed
+            # Mark INVENTORYCAPTURE record as processed
             cursor.execute("""
-                UPDATE inv_capture1 SET status = 'Y' WHERE id = %s
-            """, (record['id'],))
+                UPDATE INVENTORYCAPTURE SET STATUS = 'Y' WHERE ID = %s
+            """, (record['ID'],))
 
         conn.commit()
 
         df1 = pd.read_sql(
             '''SELECT DISTINCT "" as `Column Name`, "" as `GenericKey`, 
-                      asn_number as `ASN/Receipt`, owner as `Owner`, status as `Receipt Status` 
-               FROM download_table WHERE download_status = 'NO' ''',
+                      ASNNUMBER as `ASN/Receipt`, OWNER as `Owner`, STATUS as `Receipt Status` 
+               FROM DOWNLOADTABLE WHERE DOWNLOADSTATUS = 'No' ''',
             conn
         )
 
         df2 = pd.read_sql(
-            '''SELECT "" as `Column Name`, "" as `GenericKey`, asn_number as `ASN/Receipt`, 
-                      sku as `Item`, owner as `Owner`, line_number as `Line #`, qty as `Expected Qty`, 
-                      uom as `UOM`, lpn as `LPN`, location as `LOCATION` 
-               FROM download_table WHERE download_status = 'NO' ''',
+            '''SELECT "" as `Column Name`, "" as `GenericKey`, ASNNUMBER as `ASN/Receipt`, 
+                      SKU as `Item`, OWNER as `Owner`, LINENUMBER as `Line #`, QTY as `Expected Qty`, 
+                      UOM as `UOM`, LPN as `LPN`, LOCATION as `LOCATION` 
+               FROM DOWNLOADTABLE WHERE DOWNLOADSTATUS = 'No' ''',
             conn
         )
         
@@ -253,7 +310,7 @@ def download_excel():
             return jsonify({"error": "No data available to export"}), 404
 
         cursor = conn.cursor()
-        cursor.execute("UPDATE download_table SET download_status = 'YES' WHERE download_status = 'NO'")
+        cursor.execute("UPDATE DOWNLOADTABLE SET DOWNLOADSTATUS = 'YES' WHERE DOWNLOADSTATUS = 'No'")
         conn.commit()
         cursor.close()
 
@@ -293,6 +350,11 @@ def download_excel():
     
     final_df3 = pd.DataFrame(header_row_third_sheet)
     
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # Changed to YYYYMMDD format which is more standard
+    filename = f"inventory_export_{timestamp}.xlsx"
+    print(f"Generated filename: {filename}")  # Debug output
+    
     #memory buffer in which we will write the excel file
     output = io.BytesIO()
     
@@ -301,16 +363,18 @@ def download_excel():
         final_df1.to_excel(writer, index=False,sheet_name='Data')
         final_df2.to_excel(writer, index=False,sheet_name='Detail')
         final_df3.to_excel(writer, index=False,header=False,sheet_name='Validations')
+        
+        
     output.seek(0)
+    
     return send_file(
-        output,
-        as_attachment=True,
-        download_name='inventory_export.xlsx',
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-
-
+    output,
+    mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    as_attachment=True,
+    download_name=filename
+)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    insert_nextup() #Only runs if ASN is not inserted
+    app.run()

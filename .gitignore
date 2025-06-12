@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# Environment variables
+.env
+
+# VS Code settings
+.vscode/
+
+# Logs and system files
+*.log
+.DS_Store
+Thumbs.db
+
+# Jupyter and testing
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Compiled and backup files
+*.bak
+*.swp

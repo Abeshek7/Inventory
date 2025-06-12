@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Capture Owner</title>
     <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}">
 </head>
@@ -20,6 +21,7 @@
     <form id ="inventory_capture">
         <h1>Inventory Upload</h1>
         <div class="form-row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="owner" for="owner">OWNER :<span class="required">*</span></label>
         <input id="owner" type="text" name="owner" >
         </div>

@@ -1,137 +1,140 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #ffffff;
-}
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+        }
+ body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+        }
 
 .login-container {
-    width: 100%;
-    max-width: 420px;
-    padding: 40px;
-    background: white;
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            background: white;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
 .login-form h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 30px;
-    font-weight: 500;
-    text-align: center;
-}
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 500;
+            text-align: center;
+        }
 
 .input-group {
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center; /* Align vertically centered */
-    font-weight: 500;
-}
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
 
 .input-group label {
-    /* color: #666; */
-    color:#333;
-    font-size: 16px;
-    /* Space between label and input */
-    width: 100px; /* Fixed width for alignment */
-    /* text-align: right; */
-}
+            color: #333;
+            font-size: 16px;
+            width: 100px;
+        }
 
 .input-group input {
-    flex: 1; /* Take up remaining space */
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
-    height: 36px;
-}
-
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            height: 36px;
+        }
 
 .input-group input:focus {
-    outline: none;
-    border-color: #0066ff;
-}
+            outline: none;
+            border-color: #0066ff;
+        }
 
 .login-btn {
-    display: flex;
-    justify-content: center;
-    margin-top: 25px;
-}
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+        }
 
 .login-btn input[type="submit"] {
-    width: auto;
-    min-width: 100px;
-    padding: 8px 32px;
-    background: #0066ff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    font-weight: bold;
-}
+            width: auto;
+            min-width: 100px;
+            padding: 8px 32px;
+            background: #0066ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
 
 .login-btn input[type="submit"]:hover {
-    background: #0052cc;
-}
-
-.register-link {
-    margin-top: 20px;
-    text-align: center;
-    color: #666;
-    font-size: 14px;
-}
-
-.register-link a {
-    color: #0066ff;
-    text-decoration: none;
-    margin-left: 4px;
-}
-
-.register-link a:hover {
-    text-decoration: underline;
-}
+            background: #0052cc;
+        }
 
 .error-message {
-    color: #ff4444;
-    font-size: 14px;
-    margin-top: 10px;
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Logo positioning - below the login container */
+.logo-container {
+text-align: center;
+margin-top: 20px;
+padding: 15px 0;
+        }
+
+.logo-content {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+        }
+
+.s3-logo {
+width: 50px;
+height: 40px;
+        }
+
+.logo-text {
+color: #666;
+font-size: 14px;
+ font-weight: 400;
+        }
+.app-title {
     text-align: center;
+    margin-bottom: 30px;
 }
 
-.skandh {
-    max-height: 50px;
-}
-.s3logo {
-    margin-top: 10px;
-    max-height: 50px;
-    margin-bottom: 5px;
-}
-.top-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-}
-.top-left{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    position: absolute;
-    top: 10px;
-    left: 20px;
+.app-title h1 {
+    font-size: 30px;
+    color: rgb(8, 102, 255);
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+.app-title h1 sup {
+    font-size: 24px;
+    vertical-align: super;
+}
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+}
+a{
+    color: rgb(8, 102, 255); 
+    margin-left: 10px;    
+}
