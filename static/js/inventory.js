@@ -1,7 +1,19 @@
 const form = document.getElementById('inventory_capture_2');
 const inputs = form.querySelectorAll('input');
 const stars = form.querySelectorAll('.required');
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+// Get CSRF token with fallback
+function getCSRFToken() {
+    const metaToken = document.querySelector('meta[name="csrf-token"]');
+    if (metaToken) {
+        return metaToken.getAttribute('content');
+    }
+    // Fallback: try to get from hidden input if meta tag not available
+    const hiddenInput = document.querySelector('input[name="csrf_token"]');
+    return hiddenInput ? hiddenInput.value : null;
+}
+
+const csrfToken = getCSRFToken();
 let formsubmitted = 0;
 
 const formMessageDiv = document.getElementById('form-message');
@@ -174,31 +186,54 @@ inputs.forEach((input, index) => {
                     return;
                 }
 
-                // All validation passed - submit form
-                 //formData -- js object that takes all input values from form and converts into key-value pair format.
-                const formData = new FormData(form);
+                // Check CSRF token before submitting
+                if (!csrfToken) {
+                    showValidationMessage('Security token missing. Please refresh the page and try again.', true);
+                    return;
+                }
 
-                 //method that take iterable from formdata.entries and converts into js object
+                // All validation passed - submit form
+                const formData = new FormData(form);
                 const formObject = Object.fromEntries(formData.entries());
 
                 fetch('/second_form', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json',
-                               'X-CSRFToken': csrfToken
-                     },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
                     body: JSON.stringify(formObject)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        // Handle HTTP errors
+                        if (response.status === 400) {
+                            throw new Error('Invalid request or security validation failed.');
+                        } else if (response.status === 403) {
+                            throw new Error('Access forbidden. Please refresh the page.');
+                        } else if (response.status === 500) {
+                            throw new Error('Server error occurred. Please try again.');
+                        } else {
+                            throw new Error(`Request failed with status: ${response.status}`);
+                        }
+                    }
+                    return response.json();
+                })
                 .then(result => {
-                    // Show success message
-                    showValidationMessage(result.message || 'Data submitted successfully!', false);
-                    
-                    formsubmitted = 1;
+                    if (result.error) {
+                        showValidationMessage(result.error, true);
+                    } else {
+                        // Show success message
+                        showValidationMessage(result.message || 'Data submitted successfully!', false);
+                        
+                        formsubmitted = 1;
 
-                    // Reset form immediately after success
-                    resetForm();
+                        // Reset form immediately after success
+                        resetForm();
+                    }
                 })
                 .catch(error => {
+                    console.error('Submission error:', error);
                     showValidationMessage(error.message || 'Error submitting data. Please try again.', true);
                 });
             } else {

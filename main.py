@@ -1,11 +1,12 @@
 from flask import Flask,render_template,request,jsonify,session,url_for,send_file,redirect,make_response
 import pandas as pd
-import os,mysql.connector,io,urllib.parse
+import os,mysql.connector,io
 from werkzeug.security import generate_password_hash, check_password_hash 
 from functools import wraps
 from datetime import datetime 
 from dotenv import load_dotenv
 from flask_wtf import CSRFProtect
+from flask_wtf.csrf import generate_csrf
 
 
 app=Flask(__name__)
@@ -16,6 +17,10 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 # CSRF Protection
 csrf = CSRFProtect(app)
+
+@app.template_global()
+def csrf_token():
+    return generate_csrf()
 
 app.config.update(
     SESSION_COOKIE_SECURE=True, # Prevents client-side JavaScript from accessing session cookies.

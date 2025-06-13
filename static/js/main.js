@@ -51,5 +51,5 @@ document.getElementById('download_excel_btn').addEventListener('click', function
 });
 
 document.getElementById('Inventory-btn').addEventListener('click', function () {
-    window.location.href = '{{ url_for("firstpage") }}';
+    window.location.href = '/firstpage';  // Changed from template syntax
 });

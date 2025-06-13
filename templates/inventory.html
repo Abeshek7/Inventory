@@ -10,58 +10,56 @@
 <body>
     <header class="login-header">
         <div class="top-left">
-        <img class="skandh" src="{{ url_for('static', filename='images/skandh.png') }}" alt="Skandh Logo">
-        </div> 
+            <img class="skandh" src="{{ url_for('static', filename='images/skandh.png') }}" alt="Skandh Logo">
+        </div>
         <div class="top-right">
             <img class="s3logo" src="{{ url_for('static', filename='images/s3logo_new.png') }}" alt="S3 Logo">
         </div>
     </header>
+    
     <div class="form-container">
-    <form id="inventory_capture_2">
-        <h1>Inventory Capture</h1>
-
+        <form id="inventory_capture_2">
+            <h1>Inventory Capture</h1>
+            
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
             <div class="form-row">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label for="locn">LOCN :<span class="required">*</span></label>
-            <input id="locn" type="text" name="locn" >
+                <label for="locn">LOCN :<span class="required">*</span></label>
+                <input id="locn" type="text" name="locn" required>
             </div>
-
- 
+            
             <div class="form-row">
-            <label for="sku">SKU :<span class="required">*</span></label>
-                <input id="sku" type="text" name="sku" >
+                <label for="sku">SKU :<span class="required">*</span></label>
+                <input id="sku" type="text" name="sku" required>
             </div>
-
+            
             <div class="form-row">
-            <label for="case">LPN :<span class="not-required"></span></label>
-                <input id="case" type="text" name="LPN" >
+                <label for="lpn">LPN :<span class="not-required"></span></label>
+                <input id="lpn" type="text" name="LPN">
             </div>
-
-         
+            
             <div class="form-row">
-            <label for="uom">UOM :<span class="required">*</span></label>
-                <input id="uom" type="text" name="uom" >
+                <label for="uom">UOM :<span class="required">*</span></label>
+                <input id="uom" type="text" name="uom" required>
             </div>
-
-         
+            
             <div class="form-row">
-            <label for="qty">QTY :<span class="required">*</span></label>
-                <input id="qty" type="text" name="qty" >
+                <label for="qty">QTY :<span class="required">*</span></label>
+                <input id="qty" type="text" name="qty" required>
             </div>
-
+            
             <div id="form-message" class="message-area"></div>
+            
             <div class="form-actions">
-              <div class="left-actions">
-                 <button type="button" class="back-button" onclick="window.location.href='/firstpage' ">ESC</button>
-              </div>
+                <div class="left-actions">
+                    <button type="button" class="back-button" onclick="window.location.href='/firstpage'">ESC</button>
+                </div>
             </div>
-
-             <div id="download-message"></div>
-     
+        </form>
+        
+        <div id="download-message"></div>
     </div>
-
-    </form>
-
+    
     <script src="{{url_for('static',filename='js/inventory.js')}}"></script>
 </body>
 </html>
